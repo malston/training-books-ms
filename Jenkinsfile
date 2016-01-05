@@ -1,6 +1,6 @@
 import groovy.json.JsonSlurper
 
-def service = "books-ms"
+def service = "training-books-ms"
 def registry = "10.100.198.200:5000/"
 def swarmMaster = "10.100.192.200"
 def proxy = "10.100.192.200"
@@ -20,7 +20,7 @@ node("cd") {
     }
 
     stage "> Pre-Deployment"
-    git url: "https://github.com/vfarcic/${service}.git"
+    git url: "https://github.com/cloudbees/${service}.git"
     if (build.toBoolean()) {
         sh "sudo docker build -t ${registry}${service}-tests -f Dockerfile.test ."
         sh "sudo docker-compose -f docker-compose-dev.yml run --rm tests"

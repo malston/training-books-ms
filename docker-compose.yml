@@ -9,7 +9,7 @@ db:
   image: mongo
 
 tests:
-  image: 10.100.198.200:5000/books-ms-tests
+  image: 10.100.198.200:5000/training-books-ms-tests
   volumes:
     - ./client/components:/source/client/components
     - ./client/test:/source/client/test
@@ -21,7 +21,7 @@ tests:
     - TEST_TYPE=all
 
 testsLocal:
-  image: vfarcic/books-ms-tests
+  image: cloudbees/training-books-ms-tests
   volumes:
     - ./client/components:/source/client/components
     - ./client/test:/source/client/test
@@ -33,7 +33,7 @@ testsLocal:
     - TEST_TYPE=all
 
 integ:
-  image: 10.100.198.200:5000/books-ms-tests
+  image: 10.100.198.200:5000/training-books-ms-tests
   volumes:
     - ./src:/source/src
   environment:
@@ -41,7 +41,7 @@ integ:
     - DOMAIN=$DOMAIN
 
 feTests:
-  image: 10.100.198.200:5000/books-ms-tests
+  image: 10.100.198.200:5000/training-books-ms-tests
   stdin_open: true
   tty: true
   volumes:
@@ -55,7 +55,7 @@ feTests:
     - TEST_TYPE=watch-front
 
 feTestsLocal:
-  image: vfarcic/books-ms-tests
+  image: cloudbees/training-books-ms-tests
   stdin_open: true
   tty: true
   volumes:
