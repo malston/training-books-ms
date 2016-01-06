@@ -6,7 +6,7 @@
   <properties/>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@1.11">
     <script>node(&quot;cd&quot;) {
-    git &apos;https://github.com/cloudbees/training-books-ms.git&apos;
+    git &quot;https://github.com/cloudbees/training-books-ms.git&quot;
     def dir = pwd()
     sh &quot;mkdir -p ${dir}/db&quot;
     sh &quot;chmod 0777 ${dir}/db&quot;
@@ -15,38 +15,39 @@
     def tests = docker.image(&quot;10.100.198.200:5000/training-books-ms-tests&quot;)
     tests.pull()
     tests.inside(&quot;-v ${dir}/db:/data/db&quot;) {
-        retry(2) {
-            sh &quot;./run_tests.sh&quot;
-        }
+        sh &quot;./run_tests.sh&quot;
     }
     
     stage &quot;build&quot;
-    def service = docker.build &quot;10.100.198.200:5000/books-ms&quot;
+    def service = docker.build &quot;10.100.198.200:5000/training-books-ms&quot;
     service.push()
     stash includes: &quot;docker-compose*.yml&quot;, name: &quot;docker-compose&quot;
 }
 node(&quot;production&quot;) {
     stage &quot;deploy&quot;
     checkpoint &quot;deploy&quot;
+    def response = input message: &apos;Please confirm deployment to production&apos;, ok: &apos;Submit&apos;, parameters: [[$class: &apos;StringParameterDefinition&apos;, defaultValue: &apos;&apos;, description: &apos;Additional comments&apos;, name: &apos;&apos;]], submitter: &apos;manager&apos;
+    echo response
     unstash &quot;docker-compose&quot;
-    input message: &quot;Please confirm deployment to production&quot;, ok: &quot;I confirm&quot;
     def pull = [:]
     pull[&quot;service&quot;] = {
-        docker.image(&quot;10.100.198.200:5000/books-ms&quot;).pull()
+        docker.image(&quot;10.100.198.200:5000/training-books-ms&quot;).pull()
     }
     pull[&quot;db&quot;] = {
         docker.image(&quot;mongo&quot;).pull()
     }
     parallel pull
-    sh &quot;docker-compose -f docker-compose-dev.yml -p books-ms up -d app&quot;
+    sh &quot;docker-compose -p books-ms up -d app&quot;
     sleep 2
 }
 node(&quot;cd&quot;) {
     stage &quot;post-deployment tests&quot;
     def tests = docker.image(&quot;10.100.198.200:5000/training-books-ms-tests&quot;)
     tests.inside() {
-        withEnv([&quot;TEST_TYPE=integ&quot;, &quot;DOMAIN=http://10.100.199.201:8080&quot;]) {
-            sh &quot;./run_tests.sh&quot;
+        withEnv([&quot;TEST_TYPE=integ&quot;, &quot;DOMAIN=http://10.100.198.200:8081&quot;]) {
+            retry(2) {
+                sh &quot;./run_tests.sh&quot;
+            }
         }
     }
 }</script>
