@@ -6,7 +6,7 @@ node("cd") {
 
     def flow = load "/data/scripts/workflow-common.groovy"
     flow.runPreDeploymentTests(serviceName, registry)
-    flow.build∫(serviceName, registry)
+    flow.build(serviceName, registry)
 }
 node("production") {
     flow.deploy(serviceName, registry)
