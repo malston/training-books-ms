@@ -1,6 +1,5 @@
 def serviceName = "training-books-ms"
 def registry = "10.100.198.200:5000"
-def flow = load "/data/scripts/workflow-common.groovy"
 
 node("cd") {
     git "https://github.com/cloudbees/${serviceName}.git"
@@ -8,6 +7,7 @@ node("cd") {
     sh "mkdir -p ${dir}/db"
     sh "chmod 0777 ${dir}/db"
 
+    def flow = load "/data/scripts/workflow-common.groovy"
     flow.runPreDeploymentTests(serviceName, registry)
     flow.build∫(serviceName, registry)
 }
