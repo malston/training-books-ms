@@ -20,7 +20,6 @@ def build(serviceName, registry) {
 def deploy(serviceName, registry) {
     node("production") {
         stage "deploy"
-        checkpoint "deploy"
         def response = input message: 'Please confirm deployment to production', ok: 'Submit', parameters: [[$class: 'StringParameterDefinition', defaultValue: '', description: 'Additional comments', name: '']], submitter: 'manager'
         echo response
         unstash "docker-compose"

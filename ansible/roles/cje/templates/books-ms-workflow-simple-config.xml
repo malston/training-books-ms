@@ -23,9 +23,9 @@
     service.push()
     stash includes: &quot;docker-compose*.yml&quot;, name: &quot;docker-compose&quot;
 }
+checkpoint &quot;deploy&quot;
 node(&quot;production&quot;) {
     stage &quot;deploy&quot;
-    checkpoint &quot;deploy&quot;
     def response = input message: &apos;Please confirm deployment to production&apos;, ok: &apos;Submit&apos;, parameters: [[$class: &apos;StringParameterDefinition&apos;, defaultValue: &apos;&apos;, description: &apos;Additional comments&apos;, name: &apos;&apos;]], submitter: &apos;manager&apos;
     echo response
     unstash &quot;docker-compose&quot;
