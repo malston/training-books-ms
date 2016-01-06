@@ -18,21 +18,23 @@ def build(serviceName, registry) {
 }
 
 def deploy(serviceName, registry) {
-    stage "deploy"
-    checkpoint "deploy"
-    def response = input message: 'Please confirm deployment to production', ok: 'Submit', parameters: [[$class: 'StringParameterDefinition', defaultValue: '', description: 'Additional comments', name: '']], submitter: 'manager'
-    echo response
-    unstash "docker-compose"
-    def pull = [:]
-    pull["service"] = {
-        docker.image("${registry}/${serviceName}").pull()
+    node("production") {
+        stage "deploy"
+        checkpoint "deploy"
+        def response = input message: 'Please confirm deployment to production', ok: 'Submit', parameters: [[$class: 'StringParameterDefinition', defaultValue: '', description: 'Additional comments', name: '']], submitter: 'manager'
+        echo response
+        unstash "docker-compose"
+        def pull = [:]
+        pull["service"] = {
+            docker.image("${registry}/${serviceName}").pull()
+        }
+        pull["db"] = {
+            docker.image("mongo").pull()
+        }
+        parallel pull
+        sh "docker-compose -p books-ms up -d app"
+        sleep 2
     }
-    pull["db"] = {
-        docker.image("mongo").pull()
-    }
-    parallel pull
-    sh "docker-compose -p books-ms up -d app"
-    sleep 2
 }
 
 def runPostDeploymentTests(serviceName, registry, domain) {
