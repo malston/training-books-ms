@@ -1,5 +1,8 @@
 def runPreDeploymentTests(serviceName, registry) {
     stage "pre-deployment tests"
+    def dir = pwd()
+    sh "mkdir -p ${dir}/db"
+    sh "chmod 0777 ${dir}/db"
     def tests = docker.image("${registry}/${serviceName}-tests")
     tests.pull()
     tests.inside("-v ${dir}/db:/data/db") {
