@@ -8,5 +8,5 @@ def serviceName = "training-books-ms"
      flow.runPreDeploymentTests(serviceName, registry)
      flow.build(serviceName, registry)
      flow.deploy(serviceName, registry)
-     flow.runPostDeploymentTests(serviceName, registry, "DOMAIN=http://10.100.198.200:8081")
+     flow.runPostDeploymentTests(serviceName, registry, "http://10.100.198.200:8081")
  }
