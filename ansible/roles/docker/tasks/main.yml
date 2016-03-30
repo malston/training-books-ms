@@ -17,7 +17,10 @@
   tags: [docker]
 
 - name: Debian docker-py is present
-  pip: name=docker-py version=0.4.0 state=present
+  pip:
+    name: docker-py
+    version: 1.6.0
+    state: present
   tags: [docker]
 
 - name: Debian files are present
@@ -27,9 +30,9 @@
   register: copy_result
   tags: [docker]
 
-- name: vagrant user is added to the docker group
+- name: User is added to the docker group
   user:
-    name: vagrant
+    name: "{{ user }}"
     group: docker
   register: user_result
   tags: [docker]

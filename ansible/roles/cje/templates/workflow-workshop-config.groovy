@@ -16,9 +16,9 @@ node("cd") {
     service.push()
     stash includes: "docker-compose*.yml", name: "docker-compose"
 }
+checkpoint "deploy"
 node("production") {
     stage "deploy"
-    checkpoint "deploy"
     input message: "Please confirm deployment to production", ok: "I confirm"
     unstash "docker-compose"
     def pull = [:]
@@ -29,14 +29,16 @@ node("production") {
         docker.image("mongo").pull()
     }
     parallel pull
-    sh "docker-compose -f docker-compose-dev.yml -p books-ms up -d app"
+    sh "docker-compose -p books-ms up -d app"
+    sh "curl http://10.100.198.200:8080/docker-traceability/submitContainerStatus \
+        --data-urlencode inspectData=\"\$(docker inspect booksms_app_1)\""
     sleep 2
 }
 node("cd") {
     stage "post-deployment tests"
     def tests = docker.image("10.100.198.200:5000/training-books-ms-tests")
     tests.inside() {
-        withEnv(["TEST_TYPE=integ", "DOMAIN=http://10.100.199.201:8080"]) {
+        withEnv(["TEST_TYPE=integ", "DOMAIN=http://10.100.198.200:8081"]) {
             retry(1) {
                 sh "./run_tests.sh"
             }

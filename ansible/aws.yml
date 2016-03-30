@@ -1,0 +1,26 @@
+- hosts: localhost
+  connection: local
+  gather_facts: False
+  vars:
+    - ami_id: ami-4789952b
+    - instances: 1
+    - aws_region: eu-central-1
+    - aws_key_name: jenkins-training-key
+    - aws_group: jenkins-training-group
+  roles:
+    - aws
+
+- hosts: "{{ hosts_group }}"
+  user: ubuntu
+  become: true
+  gather_facts: true
+  vars:
+    - user: ubuntu
+  roles:
+    - common
+    - java
+    - docker
+    - docker-compose
+    - registry
+    - node
+    - cje

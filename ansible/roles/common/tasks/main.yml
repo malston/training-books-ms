@@ -1,4 +1,7 @@
-- name: JQ is present
+- name: Packages are present
   apt:
     name: jq
-  tags: [common]
+
+- name: Set hostname
+  hostname:
+    name: cje

@@ -1,15 +1,12 @@
-- name: Packages are installed
+- name: Git is installed
   apt:
-    name: "{{ item }}"
-  with_items: packages
-  tags: [cje]
+    name: git
 
 - name: Directory is created
   file:
     path: /data/jenkins_slave
-    owner: vagrant
+    owner: "{{ user }}"
     state: directory
-  tags: [cje]
 
 - name: DB directory is created
   file:
@@ -17,4 +14,3 @@
     recurse: yes
     mode: 0777
     state: directory
-  tags: [cje]
