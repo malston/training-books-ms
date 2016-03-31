@@ -1,0 +1,11 @@
+version: '2'
+
+services:
+  ssh:
+    build: ./
+    image: vfarcic/ssh-console
+    environment:
+      - USER=cb
+      - PASSWORD=cb
+    ports:
+      - 8000:80
