@@ -33,7 +33,7 @@
   ec2:
     key_name: "{{ aws_key_name }}"
     group: "{{ aws_group }}"
-    instance_type: m3.large
+    instance_type: "{{ instance_type }}"
     image: "{{ ami_id }}"
     wait: true
     exact_count: "{{ instances }}"

@@ -1,6 +1,6 @@
 - name: Directory is created
   file:
-    path: /data/jenkins
+    path: /mnt/jenkins
     state: directory
     owner: "{{ user }}"
 
@@ -10,7 +10,7 @@
     image: cloudbees/jenkins-enterprise
     ports: "8080:8080"
     volumes:
-      - /data/jenkins:/var/jenkins_home
+      - /mnt/jenkins:/var/jenkins_home
   register: jenkins_result
 
 - pause:
@@ -43,13 +43,13 @@
     --header 'Content-Type: text/xml' \
     http://localhost:8080/pluginManager/installNecessaryPlugins"
   args:
-    creates: /data/jenkins/plugins/{{ item }}
+    creates: /mnt/jenkins/plugins/{{ item }}
   with_items: plugins
   register: plugins_result
   when: not skip_licence is defined
 
 - wait_for:
-    path: /data/jenkins/plugins/{{ item }}
+    path: /mnt/jenkins/plugins/{{ item }}
   when: not skip_licence is defined
   with_items: plugins
 

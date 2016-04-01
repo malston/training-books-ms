@@ -4,4 +4,4 @@
     image: registry:2
     ports: 5000:5000
     volumes:
-      - /vagrant/registry:/var/lib/registry/docker/registry
+      - /mnt/registry:/var/lib/registry/docker/registry

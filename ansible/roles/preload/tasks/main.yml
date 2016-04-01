@@ -1,0 +1,36 @@
+- name: Pull containers
+  shell: docker pull {{ item }}
+  with_items:
+    - cloudbees/training-books-ms-tests
+    - cloudbees/training-books-ms
+    - mongo
+
+- name: Tag tests container
+  shell: docker tag cloudbees/training-books-ms-tests localhost:5000/training-books-ms-tests
+
+- name: Push tests container
+  shell: docker push localhost:5000/training-books-ms-tests
+
+- name: Clone books-ms
+  git:
+    repo: https://github.com/cloudbees/training-books-ms.git
+    dest: /mnt/training-books-ms
+
+- name: Run tests
+  shell: docker run -it --rm \
+             -v /mnt/training-books-ms/client/components:/source/client/components \
+             -v /mnt/training-books-ms/client/test:/source/client/test \
+             -v /mnt/training-books-ms/src:/source/src \
+             -v /mnt/training-books-ms/target/scala-2.10:/source/target/scala-2.10 \
+             --env TEST_TYPE=all \
+             localhost:5000/training-books-ms-tests
+  become: yes
+  become_user: cb
+
+- name: Build books-ms
+  shell: docker build -t localhost:5000/training-books-ms .
+  args:
+    chdir: /mnt/training-books-ms
+
+- name: Push books-ms
+  shell: docker push localhost:5000/training-books-ms

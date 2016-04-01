@@ -2,7 +2,7 @@
 <slave>
     <name>node-cd</name>
     <description></description>
-    <remoteFS>/data/jenkins_slave</remoteFS>
+    <remoteFS>/mnt/jenkins_slave</remoteFS>
     <numExecutors>3</numExecutors>
     <mode>NORMAL</mode>
     <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>

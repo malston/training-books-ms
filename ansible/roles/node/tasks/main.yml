@@ -4,13 +4,13 @@
 
 - name: Directory is created
   file:
-    path: /data/jenkins_slave
+    path: /mnt/jenkins_slave
     owner: "{{ user }}"
     state: directory
 
 - name: DB directory is created
   file:
-    path: /data/jenkins_slave/workspace/docker-pipeline/books-ms-build/db
+    path: /mnt/jenkins_slave/workspace/docker-pipeline/books-ms-build/db
     recurse: yes
     mode: 0777
     state: directory

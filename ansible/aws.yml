@@ -2,7 +2,10 @@
   connection: local
   gather_facts: False
   vars:
-    - ami_id: ami-4789952b
+    - ami_id: ami-ad8894c1
+    - instance_type: m3.large
+#    - instance_type: m3.xlarge
+#    - instance_type: m3.2xlarge
     - instances: 1
     - aws_region: eu-central-1
     - aws_key_name: jenkins-training-key
@@ -25,3 +28,4 @@
     - node
     - cje
     - users
+    - { role: preload, when: "preload is defined" }

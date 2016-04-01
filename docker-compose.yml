@@ -1,5 +1,5 @@
 app:
-  image: 10.100.198.200:5000/books-ms
+  image: localhost:5000/books-ms
   ports:
     - 8081:8080
   links:
@@ -9,7 +9,7 @@ db:
   image: mongo
 
 tests:
-  image: 10.100.198.200:5000/training-books-ms-tests
+  image: localhost:5000/training-books-ms-tests
   volumes:
     - ./client/components:/source/client/components
     - ./client/test:/source/client/test
@@ -21,7 +21,7 @@ tests:
     - TEST_TYPE=all
 
 integ:
-  image: 10.100.198.200:5000/training-books-ms-tests
+  image: localhost:5000/training-books-ms-tests
   volumes:
     - ./src:/source/src
   environment:
