@@ -1,5 +1,5 @@
 app:
-  image: localhost:5000/books-ms
+  image: localhost:5000/training-books-ms
   ports:
     - 8081:8080
   links:
