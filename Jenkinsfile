@@ -1,5 +1,4 @@
 node("cd") {
-    git 'https://github.com/cloudbees/training-books-ms.git'
     def dir = pwd()
     sh "mkdir -p ${dir}/db"
     sh "chmod 0777 ${dir}/db"
