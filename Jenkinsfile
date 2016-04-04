@@ -1,4 +1,5 @@
 node("cd") {
+    checkout scm
     def dir = pwd()
     sh "mkdir -p ${dir}/db"
     sh "chmod 0777 ${dir}/db"
