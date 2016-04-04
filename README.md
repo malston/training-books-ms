@@ -80,8 +80,8 @@ checkpoint "deploy"
 
 node("production") {
     stage "deploy"
-//    def response = input message: 'Please confirm deployment to production', ok: 'Submit', parameters: [[$class: 'StringParameterDefinition', defaultValue: '', description: 'Additional comments', name: '']], submitter: 'manager'
-//    echo response
+    def response = input message: 'Please confirm deployment to production', ok: 'Submit', parameters: [[$class: 'StringParameterDefinition', defaultValue: '', description: 'Additional comments', name: '']], submitter: 'manager'
+    echo response
     unstash "docker-compose"
     def pull = [:]
     pull["service"] = {
@@ -107,3 +107,13 @@ node("cd") {
     }
 }
 ```
+
+TomTom Meeting Summary (4th of April 2016)
+==========================================
+
+* Not much interest within the company
+* "Navigation" team is using TeamCity. They spoke with someone and were not impressed with Jenkins.
+* "PND" team is using two CJE masters. Involved with Docker. Interested in 60 minutes focused on Docker integration. Francois Mayer is PND manager. Michael Waysman is architect. Use AWS with CentOS 7 and use it for Docker integration.
+* "Maps" or "CPP" team is the biggest Jenkins user (three masters). Lots of jobs.
+* "Developers support" team. Many custom slaves connected to a master (mostly laptops, desktops, and VMs). Separate LDAPs on masters. Cannot manage users and slaves centrally. Requesting help with Puppet.
+* Suggestion to dedicate 4 days of the engagement (out of 7 left) to the support team and make sure that CJOCs and CJEs are up and running.
