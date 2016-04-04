@@ -90,7 +90,7 @@
       <volumes>
         <com.cloudbees.jenkins.plugins.okidocki.Volume>
           <hostPath>$WORKSPACE/db</hostPath>
-          <path>/data/db</path>
+          <path>/mnt/db</path>
         </com.cloudbees.jenkins.plugins.okidocki.Volume>
       </volumes>
       <privileged>true</privileged>

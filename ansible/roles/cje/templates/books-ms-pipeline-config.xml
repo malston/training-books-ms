@@ -154,8 +154,8 @@ def updateProxy(swarmIp, serviceName, color) {
     stash includes: &apos;nginx-*.conf&apos;, name: &apos;nginx&apos;
     node(&quot;proxy&quot;) {
         unstash &apos;nginx&apos;
-        sh &quot;sudo cp nginx-includes.conf /data/nginx/includes/${serviceName}.conf&quot;
-        sh &quot;sudo cp nginx-upstreams.conf /data/nginx/upstreams/${serviceName}.conf&quot;
+        sh &quot;sudo cp nginx-includes.conf /mnt/nginx/includes/${serviceName}.conf&quot;
+        sh &quot;sudo cp nginx-upstreams.conf /mnt/nginx/upstreams/${serviceName}.conf&quot;
         sh &quot;docker kill -s HUP nginx&quot;
     }
 }

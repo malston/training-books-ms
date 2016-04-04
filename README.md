@@ -12,6 +12,8 @@ export INSTANCES=1
 export AWS_ACCESS_KEY_ID='[YOUR_ACCESS_KEY_ID]'
 export AWS_SECRET_ACCESS_KEY='[YOUR_SECRET_ACCESS_KEY]'
 export PATH_TO_PEM=~/.ssh/jenkins-training-key.pem
+#export PATH_TO_PEM=~/.ssh/jenkins-docker-training.pem # PEM created through CB AWS console
+#export PATH_TO_PEM=~/.ssh/jenkins.pem # CB PEM
 
 echo "
 [Credentials]
@@ -41,37 +43,13 @@ sudo ./ec2.py --list
 
 INSTANCE_IP=[INSTANCE_IP]
 
-sudo ssh -i ~/.ssh/jenkins-training-key.pem ubuntu@$INSTANCE_IP
+sudo ssh -i $PATH_TO_PEM ubuntu@$INSTANCE_IP
 ```
 
 Trainees Setup
 ==============
 
 * If you do not already have an SSH client, please install [Secure Shell Chrome Extension](https://chrome.google.com/webstore/detail/secure-shell/pnhechapfaindjhompbnflcldabbghjo/related?hl=en)
-
-TODO
-====
-
-- [x] Create AWS playbook
-- [x] Add *cb* user
-- [x] Preload
-- [ ] Test PPT instructions
-- [ ] Move SSH key outside the *cje* role
-- [ ] Print the list of hosts
-- [ ] Confirm that the PPT works
-- [ ] Create UI to manage instances
-- [ ] Fix licencing
-- [ ] Choose between Web SSH and Chrome extension.
-- [ ] Write pre-training instructions (SSH, [IP], etc.)
-- [ ] Move to CB AWS
-- [ ] Test creation and provisioning of multiple EC2 instances
-- [ ] Change vfarcic@cloudbees.com to some more general email
-- [ ] Recreate screenshots
-- [ ] Recreate the videos
-- [ ] Test using SSH client
-- [ ] Test using Chrome plugin
-- [ ] Make sure that *Docker Commons Plugin* is version 1.2.1+
-
 
 
 
@@ -98,20 +76,33 @@ node("cd") {
     stash includes: "docker-compose*.yml", name: "docker-compose"
 }
 
+checkpoint "deploy"
+
 node("production") {
     stage "deploy"
+//    def response = input message: 'Please confirm deployment to production', ok: 'Submit', parameters: [[$class: 'StringParameterDefinition', defaultValue: '', description: 'Additional comments', name: '']], submitter: 'manager'
+//    echo response
     unstash "docker-compose"
-    docker.image("localhost:5000/training-books-ms").pull()
-    docker.image("mongo").pull()
+    def pull = [:]
+    pull["service"] = {
+        docker.image("localhost:5000/books-ms").pull()
+    }
+    pull["db"] = {
+        docker.image("mongo").pull()
+    }
+    parallel pull
     sh "docker-compose -p books-ms up -d app"
+    sleep 2
 }
 
 node("cd") {
     stage "post-deployment tests"
     def tests = docker.image("localhost:5000/training-books-ms-tests")
     tests.inside() {
-        withEnv(["TEST_TYPE=integ", "DOMAIN=http://localhost:8081"]) {
-            sh "./run_tests.sh"
+        withEnv(["TEST_TYPE=integ", "DOMAIN=http://[IP]:8081"]) {
+            retry(2) {
+                sh "./run_tests.sh"
+            }
         }
     }
 }

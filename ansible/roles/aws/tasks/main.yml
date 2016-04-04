@@ -1,3 +1,10 @@
+#- name: Assume role
+#  sts_assume_role:
+#    role_arn: "arn:aws:iam::cloudbees-iam:role/infra-developer-senior"
+#    role_session_name: "someRoleSession"
+#    region: "{{ aws_region }}"
+#  register: assumed_role
+
 - name: Create security group
   ec2_group:
     name: "{{ aws_group }}"
@@ -22,7 +29,7 @@
         cidr_ip: 0.0.0.0/0
       - proto: tcp
         from_port: 8080
-        to_port: 8080
+        to_port: 8081
         cidr_ip: 0.0.0.0/0
     rules_egress:
       - proto: all
@@ -43,6 +50,8 @@
       Name: jenkins-docker-training
     region: "{{ aws_region }}"
   register: ec2
+
+- debug: var=ec2.instances
 
 - name: Add all instance public IPs to host group
   add_host:

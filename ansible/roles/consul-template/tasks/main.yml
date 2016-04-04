@@ -1,6 +1,6 @@
 - name: Directory is created
   file:
-    path: /data/consul-template
+    path: /mnt/consul-template
     state: directory
   tags: [consul-template]
 

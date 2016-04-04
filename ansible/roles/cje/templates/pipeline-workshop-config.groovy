@@ -16,14 +16,17 @@ node("cd") {
     service.push()
     stash includes: "docker-compose*.yml", name: "docker-compose"
 }
+
 checkpoint "deploy"
+
 node("production") {
     stage "deploy"
-    input message: "Please confirm deployment to production", ok: "I confirm"
+    def response = input message: 'Please confirm deployment to production', ok: 'Submit', parameters: [[$class: 'StringParameterDefinition', defaultValue: '', description: 'Additional comments', name: '']], submitter: 'manager'
+    echo response
     unstash "docker-compose"
     def pull = [:]
     pull["service"] = {
-        docker.image("localhost:5000/books-ms").pull()
+        docker.image("localhost:5000/training-books-ms").pull()
     }
     pull["db"] = {
         docker.image("mongo").pull()
@@ -34,12 +37,13 @@ node("production") {
         --data-urlencode inspectData=\"\$(docker inspect booksms_app_1)\""
     sleep 2
 }
+
 node("cd") {
     stage "post-deployment tests"
     def tests = docker.image("localhost:5000/training-books-ms-tests")
     tests.inside() {
-        withEnv(["TEST_TYPE=integ", "DOMAIN=http://localhost:8081"]) {
-            retry(1) {
+        withEnv(["TEST_TYPE=integ", "DOMAIN=http://[IP]:8081"]) {
+            retry(2) {
                 sh "./run_tests.sh"
             }
         }
