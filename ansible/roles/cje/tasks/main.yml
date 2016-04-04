@@ -58,6 +58,6 @@
   when: (configs_result|changed or plugins_result|changed) and not skip_licence is defined
 
 - debug:
-    msg: "Please open CJE running on port 8080"
+    msg: "Please open CJE running on {{ ansible_hostname }}:8080"
   when: not skip_licence is defined
 

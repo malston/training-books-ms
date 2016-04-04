@@ -59,6 +59,14 @@
     groups: ec2hosts
   with_items: ec2.instances
 
+- name: Copy instance variables to file
+  lineinfile:
+    dest: "{{ playbook_dir }}/instances.yml"
+    regexp: "  - {{ item.public_ip }}"
+    line: "  - {{ item.public_ip }}"
+    create: yes
+  with_items: ec2.instances
+
 - name: Wait for SSH to come up
   wait_for:
     host: "{{ item.public_dns_name }}"

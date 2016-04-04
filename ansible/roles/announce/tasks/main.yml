@@ -1,0 +1,15 @@
+- include_vars: "{{ playbook_dir }}/instances.yml"
+  connection: local
+
+- debug: var=ips
+
+#- local_action: mail
+#                host="smtp.gmail.com"
+#                port=465
+#                username="viktor@farcic.com"
+#                password="my-secret"
+#                from="viktor@farcic.com"
+#                to="viktor@farcic.com"
+#                subject="Ansible-report"
+#                body="Bla bla bla"
+##                body='System {{ ansible_hostname }} has been successfully provisioned.'
