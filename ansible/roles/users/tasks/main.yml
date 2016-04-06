@@ -4,6 +4,7 @@
     password: "{{ password }}"
     shell: /bin/bash
     group: docker
+    groups: sudo
     append: yes
 
 - name: Allow password authentication
