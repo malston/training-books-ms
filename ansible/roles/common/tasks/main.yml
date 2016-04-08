@@ -1,7 +1,0 @@
-- name: Packages are present
-  apt:
-    name: jq
-
-- name: Set hostname
-  hostname:
-    name: cje

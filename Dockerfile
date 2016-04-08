@@ -1,21 +1,22 @@
-FROM debian:jessie
-MAINTAINER Viktor Farcic "viktor@farcic.com"
+FROM haproxy:1.6-alpine
+MAINTAINER 	Viktor Farcic <vfarcic@cloudbees.com>
 
-RUN apt-get update && \
-    apt-get install -y --force-yes --no-install-recommends openjdk-7-jdk && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache --virtual .build-deps curl unzip && \
+    curl -SL https://releases.hashicorp.com/consul-template/0.13.0/consul-template_0.13.0_linux_amd64.zip -o /usr/local/bin/consul-template.zip && \
+    unzip /usr/local/bin/consul-template.zip -d /usr/local/bin/ && \
+    rm -f /usr/local/bin/consul-template.zip && \
+    chmod +x /usr/local/bin/consul-template && \
+    apk del .build-deps
 
-ENV DB_DBNAME books
-ENV DB_COLLECTION books
-ENV DB_HOST localhost
+RUN mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2
+RUN mkdir -p /cfg/tmpl
+COPY haproxy.cfg /cfg/haproxy.cfg
+COPY haproxy.tmpl /cfg/tmpl/haproxy.tmpl
+COPY docker-flow-proxy /usr/local/bin/docker-flow-proxy
+RUN chmod +x /usr/local/bin/docker-flow-proxy
 
-COPY run.sh /run.sh
-RUN chmod +x /run.sh
-
-COPY target/scala-2.10/books-ms-assembly-1.0.jar /bs.jar
-COPY client/components /client/components
-
-CMD ["/run.sh"]
-
+ENV CONSUL_ADDRESS ""
+EXPOSE 80
 EXPOSE 8080
+
+CMD ["docker-flow-proxy", "server"]
