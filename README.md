@@ -76,9 +76,12 @@ Trainees Setup
 Exercises
 =========
 
-The exercise consists performing the whole delivery lifecycle of an application. We'll test the application, and build and push a Docker container. The service we'll use is written in Go. Since this training is language-agnostic, you are not expected to know the language. You will not need any additional tools. All the tasks can be completed with Docker.
-
 The solutions to all tasks are located at the end. Please try to solve them by yourself and look at the solutions only if you get stuck or want to validate your work.
+
+Docker Exercise
+---------------
+
+The exercise consists performing the whole delivery lifecycle of an application using only Docker. We'll test the application, and build and push a Docker container. The service we'll use is written in Go. Since this training is language-agnostic, you are not expected to know the language. You will not need any additional tools. All the tasks should be completed with Docker.
 
 Before diving into exercises, please SSH into the machine you are assigned and enter the */mnt/training-books-ms/exercises* directory. All the code you'll need is inside.
 
@@ -90,7 +93,7 @@ Docker
 The command to test the code is as follows.
 
 ```bash
-go get && go test --cover -v
+go get -t && go test --cover -v
 ```
 
 Since Go is not installed on the server, you should use the [golang](https://hub.docker.com/_/golang/) image available in the Docker Hub.
@@ -99,7 +102,7 @@ The requirements for this task are as follows.
 
 * Remove the container after the execution of the tests is finished
 * The current host directory should be mounted as the */go/src/docker-flow* volume.
-* The */go/src/docker-flow* inside the container should be working directory.
+* The */go/src/docker-flow* inside the container should be the working directory.
 * Run the above mentioned command
 
 For additional information, please consult [Docker Run](https://docs.docker.com/engine/reference/commandline/run/) documentation.
@@ -160,6 +163,8 @@ ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2
 
 For additional information, please consult [Dockerfile reference](https://docs.docker.com/engine/reference/builder/) documentation.
 
+TODO: Continue
+
 Exercise Solutions
 ==================
 
@@ -196,7 +201,7 @@ The explanation of the arguments is as follows.
 
 ### Create Dockerfile that defines the Docker image
 
-The content of the *Dockerfile* is as follows.
+The content of the *Dockerfile* should be as follows.
 
 ```
 FROM haproxy:1.6-alpine
@@ -223,73 +228,11 @@ EXPOSE 8080
 CMD ["docker-flow-proxy", "server"]
 ```
 
+The explanation of the Dockerfile instructions is as follows.
+
+* The `FROM` instruction sets the Base Image to *haproxy:1.6-alpine*.
+* The `MAINTAINER` instruction allows you to set the Author field of the generated images.
+* The `RUN` instruction executes any commands and commit the results.
+* The `COPY` instruction copies new files or directories from the source (the first argument) and adds them to the filesystem of the container at the destination path (the second argument).
+
 TODO: Continue
-
-
-
-
-
-
-
-
-
-### Build the container and push it to the private registry
-
-```bash
-docker build -t localhost/docker-flow-proxy .
-
-docker push localhost/docker-flow-proxy
-```
-
-
-
-
-node("cd") {
-    git "https://github.com/cloudbees/training-books-ms.git"
-    def dir = pwd()
-    sh "mkdir -p ${dir}/db"
-    sh "chmod 0777 ${dir}/db"
-
-    stage "pre-deployment tests"
-    def tests = docker.image("localhost:5000/training-books-ms-tests")
-    tests.pull()
-    tests.inside("-v ${dir}/db:/data/db") {
-        sh "./run_tests.sh"
-    }
-
-    stage "build"
-    def service = docker.build "localhost:5000/training-books-ms"
-    service.push()
-    stash includes: "docker-compose*.yml", name: "docker-compose"
-}
-
-checkpoint "deploy"
-
-node("production") {
-    stage "deploy"
-    def response = input message: 'Please confirm deployment to production', ok: 'Submit', parameters: [[$class: 'StringParameterDefinition', defaultValue: '', description: 'Additional comments', name: '']], submitter: 'manager'
-    echo response
-    unstash "docker-compose"
-    def pull = [:]
-    pull["service"] = {
-        docker.image("localhost:5000/training-books-ms").pull()
-    }
-    pull["db"] = {
-        docker.image("mongo").pull()
-    }
-    parallel pull
-    sh "docker-compose -p books-ms up -d app"
-    sleep 2
-}
-
-node("cd") {
-    stage "post-deployment tests"
-    def tests = docker.image("localhost:5000/training-books-ms-tests")
-    tests.inside() {
-        withEnv(["TEST_TYPE=integ", "DOMAIN=http://54.93.170.250:8081"]) {
-            retry(2) {
-                sh "./run_tests.sh"
-            }
-        }
-    }
-}
