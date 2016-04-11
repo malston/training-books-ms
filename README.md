@@ -185,6 +185,8 @@ The requirements for this task are as follows.
   * Internal port *80* should be exposed to the host as *8081*.
   * Internal port *8080* should be exposed to the host as *8082*.
 
+For additional information, please consult [Docker Run](https://docs.docker.com/engine/reference/commandline/run/) documentation.
+
 Jenkins Pipeline Exercise
 -------------------------
 
@@ -194,11 +196,16 @@ The requirements for this task are as follows.
 
 * Create a new *Pipeline* job called *docker-flow-proxy*.
 
+For additional information, please consult [Getting Started](https://github.com/jenkinsci/pipeline-plugin/blob/master/TUTORIAL.md) tutorial.
+
 ### Clone the code from the GitHub repository
 
 The requirements for this task are as follows.
 
+* Everything should run inside the node called *cd*.
 * Clone of *pipeline* branch of the *https://github.com/cloudbees/training-books-ms* repository.
+
+For additional information, please consult [node](https://jenkins.io/doc/pipeline/steps/workflow-support/#code-node-code-allocate-node) and [git](https://jenkins.io/doc/pipeline/steps/workflow-scm-step/#code-git-code-git) documentation.
 
 ### Run the tests and build the binary
 
@@ -217,6 +224,9 @@ cd /go/src/docker-flow && go get -t && go test --cover -v
 cd /go/src/docker-flow && go build -v -o docker-flow-proxy
 ```
 
+For additional information, please consult [withDockerContainer](https://jenkins.io/doc/pipeline/steps/docker-workflow/#code-withdockercontainer-code-run-build-steps-inside-a-docker-container) and [stage](https://jenkins.io/doc/pipeline/steps/workflow-support/#code-stage-code-stage) documentation.
+
+
 ### Build the image and push it to the local registry
 
 The requirements for this task are as follows.
@@ -233,6 +243,8 @@ The requirements for this task are as follows.
 * Everything should run inside the node called *cd*.
 * Archive the binary *docker-flow-proxy*.
 
+For additional information, please consult [archive](https://jenkins.io/doc/pipeline/steps/workflow-basic-steps/#code-archive-code-archive-artifacts) documentation.
+
 ### Run latest version of the container
 
 The requirements for this task are as follows.
@@ -246,6 +258,8 @@ The requirements for this task are as follows.
   * The name of the container should be *docker-flow-proxy*.
   * The internal port *80* should be exposed to the host as *8081*.
   * The internal port *8080* should be exposed to the host as *8082*.
+
+TODO: Wait until the documentation is available in jenkins.io
 
 Exercise Solutions
 ==================
@@ -404,8 +418,6 @@ The explanation of the `run` arguments is as follows.
 Jenkins Pipeline Exercise Solution
 ----------------------------------
 
-Please use to *Snippet Generator* to explore the steps used in the solution in more details.
-
 ### Create a new Pipeline job
 
 * Open the Jenkins UI.
@@ -422,6 +434,10 @@ node("cd") {
 }
 ```
 
+The explanation of the snippet is as follows.
+
+* The steps executed inside the `node` block will run in one of the slaves named or labeled *cd*.
+
 ### Run the tests and build the binary
 
 Add the following snippet below the `git` instruction inside the *Pipeline Script* field.
@@ -435,6 +451,13 @@ Add the following snippet below the `git` instruction inside the *Pipeline Scrip
     }
 ```
 
+The explanation of the snippet is as follows.
+
+* The `stage` instruction defines a group of steps.
+* The `docker.image` instruction specifies the name of the image that will be used.
+* The arguments set for the `inside` function will be passed as Docker `run` arguments.
+* The steps executed inside the `docker.image.inside` block will run inside the specified container.
+
 ### Build the image and push it to the local registry
 
 Add the following snippet below the `docker.image("golang").inside('-u 0:0')` block inside the *Pipeline Script* field.
@@ -445,6 +468,13 @@ Add the following snippet below the `docker.image("golang").inside('-u 0:0')` bl
     docker.image('localhost:5000/docker-flow-proxy').push()
 ```
 
+The explanation of the snippet is as follows.
+
+* The `stage` instruction defines a group of steps.
+* The `docker.build` instruction builds the image called `localhost:5000/docker-flow-proxy`. The name itself follows the *[REGISTRY]/[IMAGE_NAME]* format.
+* The `docker.image` instruction returns *Container*. The `push` command is given to the container *localhost:5000/docker-flow-proxy*.
+
+
 ### Archive the binary
 
 Add the following snippet below the `docker.image('localhost:5000/docker-flow-proxy').push()` instruction inside the *Pipeline Script* field.
@@ -452,6 +482,10 @@ Add the following snippet below the `docker.image('localhost:5000/docker-flow-pr
 ```bash
     archive 'docker-flow-proxy'
 ```
+
+The explanation of the snippet is as follows.
+
+* The `archive` instruction stores all the files that match the specified pattern.
 
 ### Run latest version of the container
 
@@ -467,7 +501,15 @@ node('production') {
 }
 ```
 
+The explanation of the snippet is as follows.
+
+* In case of a system failure, the `checkpoint` instruction allows restart of the job from that point.
+* The steps executed inside the `node` block will run in one of the slaves named or labeled *production*.
+* The `sh` step is used to run the Docker `rm` command that removes the container. To prevent possible failure in case such a container does not exist, the step is wrapped inside an `try/catch` statement.
+
 ### The complete Pipeline script
+
+The complete script is listed below.
 
 ```bash
 node("cd") {
