@@ -93,7 +93,7 @@ Docker
 The command to test the code is as follows.
 
 ```bash
-go get -t && go test --cover -v
+sh -c "go get -t && go test --cover -v"
 ```
 
 Since Go is not installed on the server, you should use the [golang](https://hub.docker.com/_/golang/) image available in the Docker Hub.
@@ -112,7 +112,7 @@ For additional information, please consult [Docker Run](https://docs.docker.com/
 The command to build the binary is as follows.
 
 ```bash
-go get && go build -v -o docker-flow-proxy
+sh -c "go get && go build -v -o docker-flow-proxy"
 ```
 
 The requirements for this task are as follows.
@@ -163,34 +163,59 @@ ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2
 
 For additional information, please consult [Dockerfile reference](https://docs.docker.com/engine/reference/builder/) documentation.
 
+### Build the image and push it to the local registry
+
+The requirements for this task are as follows.
+
+* Build the image defined in the *Dockerfile* and name it *docker-flow-proxy*
+* Prepare the image for pushing to the private registry running in *localhost:5000* so that it can be pushed there. Use the `tag` command.
+* Push the newly built image to the private registry running in *localhost:5000*.
+
+For additional information, please consult [Docker Build](https://docs.docker.com/engine/reference/commandline/build/), [Docker Tag](https://docs.docker.com/engine/reference/commandline/tag/), and [Docker Push](https://docs.docker.com/engine/reference/commandline/push/) documentation.
+
+Jenkins Pipeline Exercise
+-------------------------
+
+### Create a new Pipeline job called docker-flow-proxy
+
+The requirements for this task are as follows.
+
+* Create a new Pipeline job called docker-flow-proxy
+
 TODO: Continue
 
 Exercise Solutions
 ==================
 
-Docker
-------
+Docker Exercise Solution
+------------------------
 
 ### Test the code
 
 ```bash
+cd /mnt/training-books-ms/exercises
+
 docker run --rm \
     -v $PWD:/go/src/docker-flow \
     -w /go/src/docker-flow \
     golang \
-    go get && go test --cover -v
+    sh -c "go get -t && go test --cover -v"
 ```
 
 The explanation of the arguments is as follows.
 
 * The `--rm` argument automatically removes the container when it exits
 * The `-v $PWD:/go/src/docker-flow` argument mounts the current directory (`$PWD`) as `/go/src/docker-flow`.
-* The `go get && go test --cover -v ./...` argument is the command that is run inside the container
+* The `go get -t && go test --cover -v` argument is the command that is run inside the container
 
 ### Build the binary
 
 ```bash
-docker run --rm -v $PWD:/go/src/docker-flow -w /go/src/docker-flow golang go get && go build -v -o docker-flow-proxy
+docker run --rm \
+    -v $PWD:/go/src/docker-flow \
+    -w /go/src/docker-flow \
+    golang \
+    sh -c "go get && go build -v -o docker-flow-proxy"
 ```
 
 The explanation of the arguments is as follows.
@@ -234,5 +259,109 @@ The explanation of the Dockerfile instructions is as follows.
 * The `MAINTAINER` instruction allows you to set the Author field of the generated images.
 * The `RUN` instruction executes any commands and commit the results.
 * The `COPY` instruction copies new files or directories from the source (the first argument) and adds them to the filesystem of the container at the destination path (the second argument).
+* The `ENV` instruction sets the environment variable (the first argument) to the value (the second argument).
+* The `EXPOSE` instruction informs Docker that the container listens on the specified network ports at runtime.
+* The `CMD` instruction provides defaults for an executing container.
 
-TODO: Continue
+Please use your favourite editor (e.g. *vi*) to create the *Dockerfile* or `echo` the contents.
+
+```bash
+echo '
+FROM haproxy:1.6-alpine
+MAINTAINER 	Viktor Farcic <vfarcic@cloudbees.com>
+
+RUN apk add --no-cache --virtual .build-deps curl unzip && \
+    curl -SL https://releases.hashicorp.com/consul-template/0.13.0/consul-template_0.13.0_linux_amd64.zip -o /usr/local/bin/consul-template.zip && \
+    unzip /usr/local/bin/consul-template.zip -d /usr/local/bin/ && \
+    rm -f /usr/local/bin/consul-template.zip && \
+    chmod +x /usr/local/bin/consul-template && \
+    apk del .build-deps
+
+RUN mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2
+RUN mkdir -p /cfg/tmpl
+COPY haproxy.cfg /cfg/haproxy.cfg
+COPY haproxy.tmpl /cfg/tmpl/haproxy.tmpl
+COPY docker-flow-proxy /usr/local/bin/docker-flow-proxy
+RUN chmod +x /usr/local/bin/docker-flow-proxy
+
+ENV CONSUL_ADDRESS ""
+EXPOSE 80
+EXPOSE 8080
+
+CMD ["docker-flow-proxy", "server"]
+' | sudo tee Dockerfile
+```
+
+### Build the image and push it to the local registry
+
+```bash
+docker build -t docker-flow-proxy .
+
+docker tag docker-flow-proxy localhost:5000/docker-flow-proxy
+
+docker push localhost:5000/docker-flow-proxy
+```
+
+The `build` command builds Docker images from a Dockerfile and a context. The explanation of the `build` arguments is as follows.
+
+* The `-t` argument specifies the name of the image.
+* The last argument is the path of the context. In this case, the `.` (dot) argument is translated to the current directory.
+
+The `tag` command can be used to set a name of an existing image. The explanation of the `tag` arguments is as follows.
+
+* The first argument is the name of the image that should be tagged.
+* The second argument is the new name of the image. In this case, it is prefixed with `localhost:5000/` representing the address of the private registry where image image will be pushed.
+
+The `push` command is used to send images to the Docker Hub registry or to a self-hosted one. The explanation of the `tag` arguments is as follows.
+
+* The first argument represents the image that will be pushed. It is prefixed with the IP and the port of the registry where the image will be pushed.
+
+Jenkins Pipeline Exercise Solution
+----------------------------------
+
+# Create a new Pipeline job
+
+* Open the Jenkins UI.
+* Click the *New Item* link from the left-hand menu.
+* Type *docker-flow-proxy* in the *Item Name* field, select the *Pipeline* job type, and click the *OK* button.
+
+# Clone the code from the GitHub repository
+
+Write the following script inside the *Pipeline Script* field.
+
+```groovy
+node("cd") {
+    git branch: 'pipeline', url: 'https://github.com/cloudbees/training-books-ms'
+}
+```
+
+# Run the tests
+
+Add the following snippet below the `git` instruction inside the *Pipeline Script* field.
+
+```groovy
+    stage 'test'
+    docker.image("golang").inside('-u 0:0') {
+        sh 'ln -s $PWD /go/src/docker-flow'
+        sh 'cd /go/src/docker-flow && go get -t && go test --cover -v'
+    }
+```
+
+# Build the binary
+
+Add the following snippet below the last instruction inside the `docker.image("golang").inside('-u 0:0')` block inside the *Pipeline Script* field.
+
+```groovy
+        sh 'cd /go/src/docker-flow && go get && go build -v -o docker-flow-proxy'
+```
+
+### Build the image and push it to the local registry
+
+Add the following snippet below the `docker.image("golang").inside('-u 0:0')` block inside the *Pipeline Script* field.
+
+```bash
+    stage 'build'
+    docker.build('docker-flow-proxy')
+    image = docker.image('docker-flow-proxy')
+    image.push('localhost:5000/docker-flow-proxy')
+```
