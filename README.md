@@ -167,22 +167,85 @@ For additional information, please consult [Dockerfile reference](https://docs.d
 
 The requirements for this task are as follows.
 
-* Build the image defined in the *Dockerfile* and name it *docker-flow-proxy*
-* Prepare the image for pushing to the private registry running in *localhost:5000* so that it can be pushed there. Use the `tag` command.
+* Build the image defined in the *Dockerfile* and name it *localhost:5000/docker-flow-proxy*
 * Push the newly built image to the private registry running in *localhost:5000*.
 
 For additional information, please consult [Docker Build](https://docs.docker.com/engine/reference/commandline/build/), [Docker Tag](https://docs.docker.com/engine/reference/commandline/tag/), and [Docker Push](https://docs.docker.com/engine/reference/commandline/push/) documentation.
 
-Jenkins Pipeline Exercise
--------------------------
-
-### Create a new Pipeline job called docker-flow-proxy
+### Run latest version of the container
 
 The requirements for this task are as follows.
 
-* Create a new Pipeline job called docker-flow-proxy
+* List all the Docker processes.
+* If the container with the same name is already running, remove it.
+* Run the newly built container.
 
-TODO: Continue
+  * The container should run in background.
+  * The name of the container should be *docker-flow-proxy*.
+  * Internal port *80* should be exposed to the host as *8081*.
+  * Internal port *8080* should be exposed to the host as *8082*.
+
+Jenkins Pipeline Exercise
+-------------------------
+
+### Create a new Pipeline job
+
+The requirements for this task are as follows.
+
+* Create a new *Pipeline* job called *docker-flow-proxy*.
+
+### Clone the code from the GitHub repository
+
+The requirements for this task are as follows.
+
+* Clone of *pipeline* branch of the *https://github.com/cloudbees/training-books-ms* repository.
+
+### Run the tests and build the binary
+
+The requirements for this task are as follows.
+
+* Everything should run inside the node called *cd*.
+* Define the stage called *test*.
+* Run the tests and build the binary inside the *golang* container.
+
+  * Set user and group to *0*.
+  * Run the following commands inside the container.
+
+```bash
+ln -s $PWD /go/src/docker-flow
+cd /go/src/docker-flow && go get -t && go test --cover -v
+cd /go/src/docker-flow && go build -v -o docker-flow-proxy
+```
+
+### Build the image and push it to the local registry
+
+The requirements for this task are as follows.
+
+* Everything should run inside the node called *cd*.
+* Define the stage called *build*.
+* Build the container called *localhost:5000/docker-flow-proxy*.
+* Build the container called *localhost:5000/docker-flow-proxy*.
+
+### Archive the binary
+
+The requirements for this task are as follows.
+
+* Everything should run inside the node called *cd*.
+* Archive the binary *docker-flow-proxy*.
+
+### Run latest version of the container
+
+The requirements for this task are as follows.
+
+* Define the checkpoint called *deploy*
+* Everything should run inside the node called *production*.
+* Define the stage called *deploy*.
+* Delete the container called *docker-flow-proxy*. Make sure that the pipeline does not fail if the container is not running.
+* Run the *localhost:5000/docker-flow-proxy* container.
+
+  * The name of the container should be *docker-flow-proxy*.
+  * The internal port *80* should be exposed to the host as *8081*.
+  * The internal port *8080* should be exposed to the host as *8082*.
 
 Exercise Solutions
 ==================
@@ -295,37 +358,61 @@ CMD ["docker-flow-proxy", "server"]
 ### Build the image and push it to the local registry
 
 ```bash
-docker build -t docker-flow-proxy .
-
-docker tag docker-flow-proxy localhost:5000/docker-flow-proxy
+docker build -t localhost:5000/docker-flow-proxy .
 
 docker push localhost:5000/docker-flow-proxy
 ```
 
 The `build` command builds Docker images from a Dockerfile and a context. The explanation of the `build` arguments is as follows.
 
-* The `-t` argument specifies the name of the image.
+* The `-t` argument specifies the name of the image. In this case, the name is prefixed with the IP and the port of the registry where the image will be pushed.
 * The last argument is the path of the context. In this case, the `.` (dot) argument is translated to the current directory.
-
-The `tag` command can be used to set a name of an existing image. The explanation of the `tag` arguments is as follows.
-
-* The first argument is the name of the image that should be tagged.
-* The second argument is the new name of the image. In this case, it is prefixed with `localhost:5000/` representing the address of the private registry where image image will be pushed.
 
 The `push` command is used to send images to the Docker Hub registry or to a self-hosted one. The explanation of the `tag` arguments is as follows.
 
 * The first argument represents the image that will be pushed. It is prefixed with the IP and the port of the registry where the image will be pushed.
 
+### Run latest version of the container
+
+```bash
+docker ps -a
+
+docker rm -f docker-flow-proxy
+
+docker run -d \
+    --name docker-flow-proxy \
+    -p 8081:80 -p 8082:8080 \
+    localhost:5000/docker-flow-proxy
+```
+
+The explanation of the `ps` arguments is as follows.
+
+* The `-a` argument shows all containers (default shows just running)
+
+The explanation of the `rm` arguments is as follows.
+
+* The `-f` argument forces the removal of a running container.
+* The `docker-flow-proxy` argument is the name of the container that should be removed.
+
+The explanation of the `run` arguments is as follows.
+
+* The `-d` argument runs the container in background.
+* The `--name` argument assigns a name to the container.
+* The `-p` argument publishes a container's port to the host. In this case, each value is split with colon (*:*). The left hand-side represents the port that should be published on the host while the right-hand side is the port defined internally inside the container.
+* The last argument is the name of the image.
+
 Jenkins Pipeline Exercise Solution
 ----------------------------------
 
-# Create a new Pipeline job
+Please use to *Snippet Generator* to explore the steps used in the solution in more details.
+
+### Create a new Pipeline job
 
 * Open the Jenkins UI.
 * Click the *New Item* link from the left-hand menu.
 * Type *docker-flow-proxy* in the *Item Name* field, select the *Pipeline* job type, and click the *OK* button.
 
-# Clone the code from the GitHub repository
+### Clone the code from the GitHub repository
 
 Write the following script inside the *Pipeline Script* field.
 
@@ -335,7 +422,7 @@ node("cd") {
 }
 ```
 
-# Run the tests
+### Run the tests and build the binary
 
 Add the following snippet below the `git` instruction inside the *Pipeline Script* field.
 
@@ -344,15 +431,8 @@ Add the following snippet below the `git` instruction inside the *Pipeline Scrip
     docker.image("golang").inside('-u 0:0') {
         sh 'ln -s $PWD /go/src/docker-flow'
         sh 'cd /go/src/docker-flow && go get -t && go test --cover -v'
+        sh 'cd /go/src/docker-flow && go build -v -o docker-flow-proxy'
     }
-```
-
-# Build the binary
-
-Add the following snippet below the last instruction inside the `docker.image("golang").inside('-u 0:0')` block inside the *Pipeline Script* field.
-
-```groovy
-        sh 'cd /go/src/docker-flow && go get && go build -v -o docker-flow-proxy'
 ```
 
 ### Build the image and push it to the local registry
@@ -361,7 +441,58 @@ Add the following snippet below the `docker.image("golang").inside('-u 0:0')` bl
 
 ```bash
     stage 'build'
-    docker.build('docker-flow-proxy')
-    image = docker.image('docker-flow-proxy')
-    image.push('localhost:5000/docker-flow-proxy')
+    docker.build('localhost:5000/docker-flow-proxy')
+    docker.image('localhost:5000/docker-flow-proxy').push()
+```
+
+### Archive the binary
+
+Add the following snippet below the `docker.image('localhost:5000/docker-flow-proxy').push()` instruction inside the *Pipeline Script* field.
+
+```bash
+    archive 'docker-flow-proxy'
+```
+
+### Run latest version of the container
+
+```bash
+checkpoint 'deploy'
+
+node('production') {
+    stage 'deploy'
+    try {
+        sh 'docker rm -f docker-flow-proxy'
+    } catch(e) { }
+    docker.image('localhost:5000/docker-flow-proxy').run('--name docker-flow-proxy -p 8081:80 -p 8082:8080')
+}
+```
+
+### The complete Pipeline script
+
+```bash
+node("cd") {
+    git branch: 'pipeline', url: 'https://github.com/cloudbees/training-books-ms'
+
+    stage 'test'
+    docker.image("golang").inside('-u 0:0') {
+        sh 'ln -s $PWD /go/src/docker-flow'
+        sh 'cd /go/src/docker-flow && go get -t && go test --cover -v'
+        sh 'cd /go/src/docker-flow && go build -v -o docker-flow-proxy'
+    }
+
+    stage 'build'
+    docker.build('localhost:5000/docker-flow-proxy')
+    docker.image('localhost:5000/docker-flow-proxy').push()
+    archive 'docker-flow-proxy'
+}
+
+checkpoint 'deploy'
+
+node('production') {
+    stage 'deploy'
+    try {
+        sh 'docker rm -f docker-flow-proxy'
+    } catch(e) { }
+    docker.image('localhost:5000/docker-flow-proxy').run('--name docker-flow-proxy -p 8081:80 -p 8082:8080')
+}
 ```
