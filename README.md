@@ -76,12 +76,12 @@ Trainees Setup
 Exercises
 =========
 
-The solutions to all tasks are located at the end. Please try to solve them by yourself and look at the solutions only if you get stuck or want to validate your work.
+The solution to all tasks is located at the end. Please try to solve them by yourself and look at the solutions only if you get stuck or want to validate your work.
 
 Docker Exercise
 ---------------
 
-The exercise consists performing the whole delivery lifecycle of an application using only Docker. We'll test the application, and build and push a Docker container. The service we'll use is written in Go. Since this training is language-agnostic, you are not expected to know the language. You will not need any additional tools. All the tasks should be completed with Docker.
+The exercise consists of performing the whole delivery lifecycle of an application using only Docker. We'll test the application, and build and push a Docker container. The service we'll use is written in Go. Since this training is language-agnostic, you are not expected to know the language. You will not need any additional tools. All the tasks should be completed with Docker.
 
 Before diving into exercises, please SSH into the machine you are assigned and enter the */mnt/training-books-ms/exercises* directory. All the code you'll need is inside.
 

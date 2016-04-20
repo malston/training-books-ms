@@ -29,4 +29,3 @@
     - cje
     - users
     - { role: preload, when: "preload is defined" }
-    - announce
