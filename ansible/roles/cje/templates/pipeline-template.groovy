@@ -6,7 +6,6 @@ node("cd") {
 
     stage "pre-deployment tests"
     def tests = docker.image("${registry}/${serviceName}-tests")
-    tests.pull()
     tests.inside("-v ${dir}/db:/data/db") {
         sh "./run_tests.sh"
     }
