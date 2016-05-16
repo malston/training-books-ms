@@ -10,3 +10,5 @@
     - registry
     - node
     - cje
+    - users
+    - { role: preload, when: "preload is defined" }
