@@ -5,7 +5,7 @@
     # - ami_id: ami-4124d82c (paravirtual)
     # - ami_id: ami-452bd728 (hvm)
     - ami_id: ami-452bd728
-    - instance_type: t2.micro
+    - instance_type: t2.small
     - instances: 1
     - aws_region: us-east-1
     - aws_key_name: jenkins-training-key
