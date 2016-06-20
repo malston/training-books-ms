@@ -2,7 +2,9 @@
   connection: local
   gather_facts: False
   vars:
-    - ami_id: ami-4124d82c
+    # - ami_id: ami-4124d82c (paravirtual)
+    # - ami_id: ami-452bd728 (hvm)
+    - ami_id: ami-452bd728
     - instance_type: t2.micro
     - instances: 1
     - aws_region: us-east-1
