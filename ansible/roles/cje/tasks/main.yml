@@ -13,8 +13,10 @@
       - /mnt/jenkins:/var/jenkins_home
   register: jenkins_result
 
-- name: Wait for the license.xml file, please register your jenkins on port 8080.
-  wait_for: path=/mnt/jenkins/license.xml
+- pause:
+    minutes: "{{ minutes_to_wait }}"
+#    prompt: "Make sure that CJE running on port 8080 is licenced. Press any key when finished."
+  when: jenkins_result|changed and not skip_licence is defined
 
 - name: Configuration directories are created
   file:
