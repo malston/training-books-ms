@@ -50,7 +50,7 @@
     vpc_subnet_id: "{{ subnet_id }}"
     assign_public_ip: yes
     volumes:
-      - device_name: /dev/xvda
+      - device_name: /dev/sda1
         volume_type: gp2
         volume_size: "{{ volume_size }}"
     wait: true
