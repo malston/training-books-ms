@@ -49,6 +49,7 @@
     image: "{{ ami_id }}"
     vpc_subnet_id: "{{ subnet_id }}"
     assign_public_ip: yes
+    volume_size: "{{ volume_size }}"
     wait: true
     exact_count: "{{ instances }}"
     count_tag:
