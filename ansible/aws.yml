@@ -12,6 +12,7 @@
     - aws_group: jenkins-training-group
     - subnet_id: subnet-c9888fbf
     - vpc_id: vpc-dc3890bb
+    - volume_size: 15
   roles:
     - aws
 

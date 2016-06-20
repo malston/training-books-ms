@@ -1,7 +1,7 @@
 - name: Create cb user
   user:
     name: cb
-    password: "{{ password }}"
+    password: "{{ lookup('env', 'TMP_PASSWORD') }}"
     shell: /bin/bash
     group: docker
     groups: sudo
