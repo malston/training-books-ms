@@ -8,6 +8,7 @@
 - name: Create security group
   ec2_group:
     name: "{{ aws_group }}"
+    vpc_id: "{{ vpc_id }}"
     description: "Jenkins/Docker training security group"
     region: "{{ aws_region }}"
     rules:
