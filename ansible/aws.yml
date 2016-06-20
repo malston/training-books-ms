@@ -2,14 +2,13 @@
   connection: local
   gather_facts: False
   vars:
-    - ami_id: ami-ad8894c1
-#    - instance_type: m3.large
-    - instance_type: m3.xlarge
-#    - instance_type: m3.2xlarge
+    - ami_id: ami-4124d82c
+    - instance_type: t2.micro
     - instances: 1
-    - aws_region: eu-central-1
+    - aws_region: us-east-1
     - aws_key_name: jenkins-training-key
     - aws_group: jenkins-training-group
+    - subnet_id: subnet-c9888fbf
   roles:
     - aws
 

@@ -46,6 +46,8 @@
     group: "{{ aws_group }}"
     instance_type: "{{ instance_type }}"
     image: "{{ ami_id }}"
+    vpc_subnet_id: "{{ subnet_id }}"
+    assign_public_ip: yes
     wait: true
     exact_count: "{{ instances }}"
     count_tag:
