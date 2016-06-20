@@ -1,9 +1,11 @@
-- name: Pull containers
-  shell: docker pull {{ item }}
-  with_items:
-    - cloudbees/training-books-ms-tests
-    - cloudbees/training-books-ms
-    - mongo
+- name: pull cloudbees/training-books-ms-tests
+  shell: docker pull cloudbees/training-books-ms-tests
+
+- name: pull cloudbees/training-books-ms
+  shell: docker pull cloudbees/training-books-ms
+
+- name: pull mongo
+  shell: docker pull mongo
 
 - name: Tag tests container
   shell: docker tag cloudbees/training-books-ms-tests localhost:5000/training-books-ms-tests
