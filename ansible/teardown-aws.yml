@@ -1,0 +1,17 @@
+- hosts: localhost
+  connection: local
+  gather_facts: False
+  vars:
+    # - ami_id: ami-4124d82c (paravirtual)
+    # - ami_id: ami-452bd728 (hvm)
+    - ami_id: ami-452bd728
+    - instance_type: t2.small
+    - instances: 1
+    - aws_region: us-east-1
+    - aws_key_name: jenkins-training-key
+    - aws_group: jenkins-training-group
+    - subnet_id: subnet-c9888fbf
+    - vpc_id: vpc-dc3890bb
+    - volume_size: 15
+  roles:
+    - teardown-aws
