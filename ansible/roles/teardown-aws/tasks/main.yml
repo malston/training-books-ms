@@ -10,19 +10,9 @@
       - device_name: /dev/sda1
         volume_type: gp2
         volume_size: "{{ volume_size }}"
-    wait: true
-    exact_count: "{{ instances }}"
+    exact_count: 0
     count_tag:
       Name: jenkins-docker-training
     instance_tags:
       Name: jenkins-docker-training
     region: "{{ aws_region }}"
-  register: ec2
-
-- debug: var=ec2.instances
-
-
-- name: Terminate instances that were previously launched
-  ec2:
-    state: 'absent'
-    instance_ids: '{{ ec2.instance_ids }}'
