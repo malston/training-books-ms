@@ -17,7 +17,7 @@
     dest: /mnt/training-books-ms
 
 - name: Run tests
-  shell: docker run -it --rm \
+  shell: docker run --rm \
              -v /mnt/training-books-ms/client/components:/source/client/components \
              -v /mnt/training-books-ms/client/test:/source/client/test \
              -v /mnt/training-books-ms/src:/source/src \
