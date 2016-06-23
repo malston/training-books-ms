@@ -14,21 +14,4 @@
     - vpc_id: vpc-dc3890bb
     - volume_size: 15
   roles:
-    - aws
-
-- hosts: "{{ hosts_group }}"
-  user: ubuntu
-  become: true
-  gather_facts: true
-  vars:
-    - user: ubuntu
-  roles:
-    - common
-    - java
-    - docker
-    - docker-compose
-    - registry
-    - node
-    - cje
-    - users
-    - { role: preload, when: "preload is defined" }
+    - teardown-aws

@@ -13,8 +13,14 @@
       - /mnt/jenkins:/var/jenkins_home
   register: jenkins_result
 
-- pause:
-    prompt: "Make sure that CJE running on port 8080 is licenced. Press any key when finished."
+- name: Time for register your jenkins. Open it on 8080.
+  debug: msg="Please register your CJE on {{ ansible_hostname }}:8080"
+
+- command: cat /mnt/jenkins/license.xml
+  register: log_output
+  until: log_output.stdout.find("PRIVATE KEY") > -1
+  retries: 10
+  delay: 30
   when: jenkins_result|changed and not skip_licence is defined
 
 - name: Configuration directories are created

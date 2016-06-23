@@ -1,0 +1,18 @@
+- name: Terminate instances
+  ec2:
+    key_name: "{{ aws_key_name }}"
+    group: "{{ aws_group }}"
+    instance_type: "{{ instance_type }}"
+    image: "{{ ami_id }}"
+    vpc_subnet_id: "{{ subnet_id }}"
+    assign_public_ip: yes
+    volumes:
+      - device_name: /dev/sda1
+        volume_type: gp2
+        volume_size: "{{ volume_size }}"
+    exact_count: 0
+    count_tag:
+      Name: jenkins-docker-training
+    instance_tags:
+      Name: jenkins-docker-training
+    region: "{{ aws_region }}"

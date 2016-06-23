@@ -8,6 +8,7 @@
 - name: Create security group
   ec2_group:
     name: "{{ aws_group }}"
+    vpc_id: "{{ vpc_id }}"
     description: "Jenkins/Docker training security group"
     region: "{{ aws_region }}"
     rules:
@@ -18,15 +19,15 @@
       - proto: tcp
         from_port: 80
         to_port: 80
-        cidr_ip: 0.0.0.0/32
+        cidr_ip: 0.0.0.0/0
       - proto: tcp
         from_port: 443
         to_port: 443
-        cidr_ip: 0.0.0.0/32
+        cidr_ip: 0.0.0.0/0
       - proto: tcp
         from_port: 8000
         to_port: 8000
-        cidr_ip: 0.0.0.0/32
+        cidr_ip: 0.0.0.0/0
       - proto: tcp
         from_port: 8080
         to_port: 8080
@@ -34,10 +35,10 @@
       - proto: tcp
         from_port: 8081
         to_port: 8081
-        cidr_ip: 0.0.0.0/32
+        cidr_ip: 0.0.0.0/0
     rules_egress:
       - proto: all
-        cidr_ip: 0.0.0.0/32
+        cidr_ip: 0.0.0.0/0
   register: basic_firewall
 
 - name: Create instances
@@ -46,6 +47,12 @@
     group: "{{ aws_group }}"
     instance_type: "{{ instance_type }}"
     image: "{{ ami_id }}"
+    vpc_subnet_id: "{{ subnet_id }}"
+    assign_public_ip: yes
+    volumes:
+      - device_name: /dev/sda1
+        volume_type: gp2
+        volume_size: "{{ volume_size }}"
     wait: true
     exact_count: "{{ instances }}"
     count_tag:
