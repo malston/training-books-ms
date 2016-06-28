@@ -53,7 +53,7 @@ chmod +x run_tests.sh
   <buildWrappers>
     <com.cloudbees.jenkins.plugins.okidocki.DockerBuildWrapper plugin="docker-custom-build-environment@1.6.4">
       <selector class="com.cloudbees.jenkins.plugins.okidocki.PullDockerImageSelector">
-        <image>10.100.198.200:5000/training-books-ms-tests</image>
+        <image>localhost:5000/training-books-ms-tests</image>
       </selector>
       <dockerHost plugin="docker-commons@1.2"/>
       <dockerRegistryCredentials></dockerRegistryCredentials>

@@ -22,7 +22,7 @@
         <hudson.model.StringParameterDefinition>
           <name>registryIp</name>
           <description></description>
-          <defaultValue>10.100.198.200:5000</defaultValue>
+          <defaultValue>localhost:5000</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>swarmIp</name>
@@ -60,7 +60,7 @@ node(&quot;cd&quot;) {
     tests.inside(&quot;-v ${dir}/db:/data/db&quot;) {
         sh &quot;./run_tests.sh&quot;
     }
-    
+
     stage &quot;building&quot;
     def service = docker.build &quot;${registryIp}/${serviceName}&quot;
     service.push()
@@ -88,10 +88,10 @@ node(&quot;cd&quot;) {
         }
         error(&quot;Pre-integration tests failed&quot;)
     }
-    
+
     stage &quot;integration&quot;
     updateProxy(swarmIp, serviceName, nextColor);
-    
+
     stage &quot;post-integration tests&quot;
     try {
         docker.image(&quot;${registryIp}/${serviceName}-tests&quot;).inside() {

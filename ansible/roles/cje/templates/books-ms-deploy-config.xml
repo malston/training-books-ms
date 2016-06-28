@@ -43,7 +43,7 @@
       <doNotFingerprintArtifacts>false</doNotFingerprintArtifacts>
     </hudson.plugins.copyartifact.CopyArtifact>
     <org.jenkinsci.plugins.dockerhub.notification.DockerPullImageBuilder plugin="dockerhub-notification@1.0.2">
-      <image>10.100.198.200:5000/books-ms</image>
+      <image>localhost:5000/books-ms</image>
       <registry plugin="docker-commons@1.2"/>
     </org.jenkinsci.plugins.dockerhub.notification.DockerPullImageBuilder>
     <hudson.tasks.Shell>

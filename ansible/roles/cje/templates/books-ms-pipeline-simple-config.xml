@@ -10,16 +10,16 @@
     def dir = pwd()
     sh &quot;mkdir -p ${dir}/db&quot;
     sh &quot;chmod 0777 ${dir}/db&quot;
-    
+
     stage &quot;pre-deployment tests&quot;
-    def tests = docker.image(&quot;10.100.198.200:5000/training-books-ms-tests&quot;)
+    def tests = docker.image(&quot;localhost:5000/training-books-ms-tests&quot;)
     tests.pull()
     tests.inside(&quot;-v ${dir}/db:/data/db&quot;) {
         sh &quot;./run_tests.sh&quot;
     }
-    
+
     stage &quot;build&quot;
-    def service = docker.build &quot;10.100.198.200:5000/training-books-ms&quot;
+    def service = docker.build &quot;localhost:5000/training-books-ms&quot;
     service.push()
     stash includes: &quot;docker-compose*.yml&quot;, name: &quot;docker-compose&quot;
 }
@@ -31,7 +31,7 @@ node(&quot;production&quot;) {
     unstash &quot;docker-compose&quot;
     def pull = [:]
     pull[&quot;service&quot;] = {
-        docker.image(&quot;10.100.198.200:5000/training-books-ms&quot;).pull()
+        docker.image(&quot;localhost:5000/training-books-ms&quot;).pull()
     }
     pull[&quot;db&quot;] = {
         docker.image(&quot;mongo&quot;).pull()
@@ -42,7 +42,7 @@ node(&quot;production&quot;) {
 }
 node(&quot;cd&quot;) {
     stage &quot;post-deployment tests&quot;
-    def tests = docker.image(&quot;10.100.198.200:5000/training-books-ms-tests&quot;)
+    def tests = docker.image(&quot;localhost:5000/training-books-ms-tests&quot;)
     tests.inside() {
         withEnv([&quot;TEST_TYPE=integ&quot;, &quot;DOMAIN=http://10.100.198.200:8081&quot;]) {
             retry(2) {
