@@ -1,19 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <slave>
-    <name>node-cd</name>
-    <description></description>
-    <remoteFS>/mnt/jenkins_slave</remoteFS>
-    <numExecutors>3</numExecutors>
-    <mode>NORMAL</mode>
-    <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>
-    <launcher class="hudson.plugins.sshslaves.SSHLauncher" plugin="ssh-slaves@1.10">
-        <host>{{ ansible_all_ipv4_addresses[0] }}</host>
-        <port>22</port>
-        <credentialsId>87f4552e-f98b-4963-99af-89b26d9e2304</credentialsId>
-        <maxNumRetries>0</maxNumRetries>
-        <retryWaitTime>0</retryWaitTime>
-    </launcher>
-    <label>docker cd</label>
-    <nodeProperties/>
-    <userId>anonymous</userId>
+  <name>node-cd</name>
+  <description></description>
+  <remoteFS>/mnt/jenkins_slave</remoteFS>
+  <numExecutors>3</numExecutors>
+  <mode>NORMAL</mode>
+  <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>
+  <launcher class="hudson.plugins.sshslaves.SSHLauncher" plugin="ssh-slaves@1.10">
+    <host>172.17.0.1</host>
+    <port>22</port>
+    <credentialsId>e22491c8-301c-4e6a-9d41-8c9bf435c361</credentialsId>
+    <maxNumRetries>0</maxNumRetries>
+    <retryWaitTime>0</retryWaitTime>
+  </launcher>
+  <label>docker cd</label>
+  <nodeProperties/>
+  <userId>anonymous</userId>
 </slave>
