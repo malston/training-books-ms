@@ -7,7 +7,7 @@
   <mode>NORMAL</mode>
   <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>
   <launcher class="hudson.plugins.sshslaves.SSHLauncher" plugin="ssh-slaves@1.10">
-    <host>172.17.0.1</host>
+    <host>{{ ansible_all_ipv4_addresses[0] }}</host>
     <port>22</port>
     <credentialsId>e22491c8-301c-4e6a-9d41-8c9bf435c361</credentialsId>
     <maxNumRetries>0</maxNumRetries>
