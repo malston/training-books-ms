@@ -11,7 +11,14 @@ configs: [
   { src: "books-ms-integrate-config.xml", dir: "/mnt/jenkins/jobs/docker-pipeline/jobs/books-ms-integrate", file: "config.xml" },
   { src: "books-ms-pipeline-simple-config.xml", dir: "/mnt/jenkins/jobs/books-ms-pipeline-simple", file: "config.xml" },
   { src: "books-ms-pipeline-config.xml", dir: "/mnt/jenkins/jobs/books-ms-pipeline", file: "config.xml" },
-  { src: "pipeline-common.groovy", dir: "/mnt/scripts", file: "pipeline-common.groovy" }
+  { src: "pipeline-common.groovy", dir: "/mnt/scripts", file: "pipeline-common.groovy" },
+  { src: "pipeline-workshop.groovy", dir: "/mnt/scripts", file: "pipeline-workshop.groovy" },
+  { src: "crossing-streams-config.xml", dir: "/mnt/jenkins/jobs/crossing-streams", file: "config.xml" },
+  { src: "docker-config.xml", dir: "/mnt/jenkins/jobs/docker", file: "config.xml" },
+  { src: "Jenkinsfile-config.xml", dir: "/mnt/jenkins/jobs/Jenkinsfile", file: "config.xml" },
+  { src: "multibranch-config.xml", dir: "/mnt/jenkins/jobs/multibranch", file: "config.xml" },
+  { src: "pods-config.xml", dir: "/mnt/jenkins/jobs/pods", file: "config.xml" },
+  { src: "spring-cloud-event-sourcing-pipeline-config.xml", dir: "/mnt/jenkins/jobs/spring-cloud-event-sourcing-pipeline", file: "config.xml" }
 ]
 
 plugins:
