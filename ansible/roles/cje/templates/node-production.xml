@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <slave>
-  <name>node-production</name>
+  <name>{{ item.node_name }}</name>
   <description></description>
   <remoteFS>/mnt/jenkins_slave</remoteFS>
   <numExecutors>3</numExecutors>
