@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@1.11">
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <jenkins.branch.RateLimitBranchProperty_-JobPropertyImpl plugin="branch-api@0.2">
+      <durationName>hour</durationName>
+      <count>0</count>
+    </jenkins.branch.RateLimitBranchProperty_-JobPropertyImpl>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@1.11">
+    <script>def maven = docker.image(&quot;maven:3.3.3-jdk-8&quot;)
+
+node {
+   stage &apos;Build&apos;
+   git &apos;https://github.com/ndeloof/cddemo&apos;
+   maven.inside {
+      sh &apos;mvn clean package -Dmaven.repo.local=.repo&apos;
+   }
+
+   stage &apos;Bake Docker image&apos;
+   def image = docker.build(&quot;ndeloof/demo:${env.BUILD_TAG}&quot;, &apos;.&apos;)
+
+   stage &apos;Test image&apos;
+   def app = image.run(&apos;-p 9999:8080&apos;)
+   try {
+      maven.inside {
+         sh &apos;mvn -f sometests test -Durl=http://172.17.42.1:9999/x -Dmaven.repo.local=.repo&apos;
+      }
+   } finally {
+      app.stop()
+   }
+
+   checkpoint &apos;before-push&apos;
+
+   docker.withRegistry(&apos;http://localhost:5000&apos;, &apos;docker-registry&apos;) {
+       // image.push(&quot;latest&quot;)
+   }
+
+
+}</script>
+    <sandbox>false</sandbox>
+  </definition>
+  <triggers/>
+</flow-definition>
