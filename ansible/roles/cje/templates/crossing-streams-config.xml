@@ -26,7 +26,7 @@ node {
    def app = image.run(&apos;-p 9999:8080&apos;)
    try {
       maven.inside {
-         sh &apos;mvn -f sometests test -Durl=http://172.17.42.1:9999/x -Dmaven.repo.local=.repo&apos;
+         sh &apos;mvn -f sometests test -Durl=http://172.17.0.1:9999/x -Dmaven.repo.local=.repo&apos;
       }
    } finally {
       app.stop()
