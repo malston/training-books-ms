@@ -18,6 +18,7 @@ configs: [
   { src: "Jenkinsfile-config.xml", dir: "/mnt/jenkins/jobs/Jenkinsfile", file: "config.xml" },
   { src: "multibranch-config.xml", dir: "/mnt/jenkins/jobs/multibranch", file: "config.xml" },
   { src: "pods-config.xml", dir: "/mnt/jenkins/jobs/pods", file: "config.xml" },
+  { src: "sample-spring-cloud-svc-ci-config.xml", dir: "/mnt/jenkins/jobs/sample-spring-cloud-svc-ci", file: "config.xml" },
   { src: "spring-cloud-event-sourcing-pipeline-config.xml", dir: "/mnt/jenkins/jobs/spring-cloud-event-sourcing-pipeline", file: "config.xml" }
 ]
 
@@ -26,3 +27,4 @@ plugins:
  - build-pipeline-plugin
  - mock-security-realm
  - docker-commons
+ - docker-slaves
