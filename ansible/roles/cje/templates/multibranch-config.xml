@@ -57,7 +57,7 @@
     <jenkins.branch.BranchSource plugin="branch-api@0.2">
       <source class="jenkins.plugins.git.GitSCMSource" plugin="git@2.5.0">
         <id>daf691de-84d0-4356-959e-dbf0ec150573</id>
-        <remote>https://github.com/ndeloof/cddemo</remote>
+        <remote>https://github.com/malston/cddemo</remote>
         <credentialsId></credentialsId>
         <includes>*</includes>
         <excludes></excludes>

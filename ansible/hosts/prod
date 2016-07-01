@@ -1,2 +1,4 @@
 [aws]
 127.0.0.1 ansible_python_interpreter=/usr/bin/python
+[cje]
+10.100.198.200 ansible_ssh_private_key_file=/vagrant/.vagrant/machines/cje/virtualbox/private_key

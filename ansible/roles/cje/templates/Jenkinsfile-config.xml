@@ -1,15 +1,15 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<flow-definition plugin="workflow-job@1.10">
+<flow-definition plugin="workflow-job@1.11">
   <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties/>
-  <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@1.11">
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@1.14">
     <scm class="hudson.plugins.git.GitSCM" plugin="git@2.5.0">
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>https://github.com/ndeloof/cddemo</url>
+          <url>https://github.com/malston/cddemo</url>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
       <branches>
@@ -22,6 +22,7 @@
       <extensions/>
     </scm>
     <scriptPath>Jenkinsfile</scriptPath>
+    <sandbox>false</sandbox>
   </definition>
   <triggers/>
 </flow-definition>

@@ -9,18 +9,18 @@
       <count>0</count>
     </jenkins.branch.RateLimitBranchProperty_-JobPropertyImpl>
   </properties>
-  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@1.11">
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@1.14">
     <script>def maven = docker.image(&quot;maven:3.3.3-jdk-8&quot;)
 
 node {
    stage &apos;Build&apos;
-   git &apos;https://github.com/ndeloof/cddemo&apos;
+   git &apos;https://github.com/malston/cddemo&apos;
    maven.inside {
       sh &apos;mvn clean package -Dmaven.repo.local=.repo&apos;
    }
 
    stage &apos;Bake Docker image&apos;
-   def image = docker.build(&quot;ndeloof/demo:${env.BUILD_TAG}&quot;, &apos;.&apos;)
+   def image = docker.build(&quot;malston/demo:${env.BUILD_TAG}&quot;, &apos;.&apos;)
 
    stage &apos;Test image&apos;
    def app = image.run(&apos;-p 9999:8080&apos;)
