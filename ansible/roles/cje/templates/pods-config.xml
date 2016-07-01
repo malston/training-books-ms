@@ -4,7 +4,7 @@
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <com.cloudbees.jenkins.plugins.dockerslaves.JobBuildsContainersDefinition plugin="docker-slaves@1.1">
+    <com.cloudbees.jenkins.plugins.dockerslaves.JobBuildsContainersDefinition plugin="docker-slaves@0.5">
       <buildHostImage class="com.cloudbees.jenkins.plugins.dockerslaves.DockerfileContainerDefinition">
         <dockerfile>Dockerfile</dockerfile>
         <contextPath></contextPath>
@@ -45,8 +45,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>composer install
-vendor/bin/phpunit</command>
+      <command>composer install vendor/bin/phpunit</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
